@@ -1,0 +1,38 @@
+name: Tự động đóng gói APK Thang Máy
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # Cho phép nhấn nút build thủ công
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Lấy mã nguồn (Checkout)
+        uses: actions/checkout@v4
+
+      - name: Thiết lập Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Thiết lập Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Cài đặt thư viện
+        run: flutter pub get
+
+      - name: Biên dịch file APK Release
+        run: flutter build apk --release
+
+      - name: Lưu trữ và cung cấp link tải APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoTayThangMay-Release-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
