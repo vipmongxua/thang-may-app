@@ -3,7 +3,7 @@ name: Tự động đóng gói APK Thang Máy
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch: # Cho phép nhấn nút build thủ công
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,14 +25,19 @@ jobs:
           channel: 'stable'
           cache: true
 
+      # Tự động tạo thư mục android/ nếu tạo dự án từ web
+      - name: Tự động tạo khung cấu hình Android
+        run: |
+          flutter create . --platforms=android --org com.vipmongxua.thangmay
+
       - name: Cài đặt thư viện
         run: flutter pub get
 
       - name: Biên dịch file APK Release
         run: flutter build apk --release
 
-      - name: Lưu trữ và cung cấp link tải APK
+      - name: Xuất file APK để tải về
         uses: actions/upload-artifact@v4
         with:
-          name: SoTayThangMay-Release-APK
+          name: ThangMayApp-Release-APK
           path: build/app/outputs/flutter-apk/app-release.apk
